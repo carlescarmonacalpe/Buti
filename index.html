@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Conectar-se</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/signin.css" rel="stylesheet">
+</head>
+<script>
+    function miFunc() {
+        const user = document.getElementById("inputUser");
+        const password = document.getElementById("inputPassword");
+        alert(user);
+    }
+</script>
+
+<body class="text-center">
+    <form class="form-signin">
+        <img class="mb-4" src="img/buti.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Inici Sessió</h1>
+        <label for="inputUser" class="sr-only">Usuari</label>
+        <input type="text" id="user" class="form-control" placeholder="Usuari" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Contrasenya" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Conecta</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
+    </form>
+</body>
+
+<script src="js/jquery.min.js"></script>
+<script defer>
+    $(document).ready(function () {
+
+        console.log(localStorage.connected)
+        if (localStorage.connected == "true") {
+            window.location.href = "main.html";
+        }
+
+        $("form").submit(function (e) {
+            var user = $("#user").val();
+            var password = $("#inputPassword").val();
+
+            if (user == "admin" && password == "admin") {
+                localStorage.setItem("connected", true);
+                console.log(localStorage.connected);
+                //window.location.href = "main.html";
+            } else {
+            }
+        });
+    });
+</script>
+
+</html>

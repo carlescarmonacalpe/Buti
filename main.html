@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Principal</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/cover/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="text-center">
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Butifarla</h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+            <a class="p-2 text-dark active" href="main.html">Principal</a>
+            <a class="p-2 text-dark" href="parelles.html">Parelles</a>
+            <a class="p-2 text-dark" href="puntuacio.html">Puntuacio</a>
+            <a id="partida" class="p-2 text-dark" href="#"></a>
+        </nav>
+    </div>
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <nav class="nav nav-masthead justify-content-center">
+                </nav>
+            </div>
+        </header>
+
+        <main role="main" class="inner cover">
+            <h1 id="ronda_title" class="cover-heading">Ronda</h1>
+            <p class="lead">
+                <a id="next_round" href="#" class="btn btn-lg btn-secondary">Començar</a>
+            </p>
+            <div id="table">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom equip</th>
+                            <th>Parella 1</th>
+                            <th>Parella 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Afegir puntuació</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <input type="hidden" id="parella1_id" name="parella1_id" value="" />
+                            <input type="hidden" id="parella2_id" name="parella2_id" value="" />
+                            <div class="row">
+                                <div class="col text-center">
+                                    <label id="parella1" class="col-sm-3 col-form-label center"></label>
+                                </div>
+                                <div class="col text-center">
+                                    <label class="col-sm-3 col-form-label">PF</label>
+                                    <input id="parella1_puntsf" class="form-control" placeholder="PF">
+                                </div>
+                                <div class="col text-center">
+                                    <label class="col-sm-3 col-form-label">PC</label>
+                                    <input id="parella1_puntsc" class="form-control" placeholder="PC">
+                                </div>
+                            </div>
+                            <!--<div class="row">
+                                <div class="col">
+                                    <label id="parella2" class="col-sm-2 col-form-label"></label>
+                                </div>
+                                <div class="col">
+                                    <input id="parella2_puntsf" class="form-control" placeholder="PF">
+                                </div>
+                                <div class="col">
+                                    <input id="parella2_puntsc" class="form-control" placeholder="PC">
+                                </div>
+                            </div>-->
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tancar</button>
+                        <button id="guardarpunts" name="guardarpunts" type="button"
+                            class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mastfoot mt-auto">
+        </footer>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script defer>
+
+        console.log(localStorage.connected)
+        if (localStorage.connected != "true") {
+            window.location.href = "index.html";
+        }
+
+        $(document).ready(function () {
+
+            $("#partida").click(function () {
+                localStorage.removeItem("parelles");
+                localStorage.removeItem("victories");
+                localStorage.removeItem("punts");
+                localStorage.removeItem("resultat_equip");
+                localStorage.removeItem("punts_equip");
+                localStorage.removeItem("punts_ronda");
+                localStorage.removeItem("jugat_equip");
+                localStorage.removeItem("partides_ronda");
+                localStorage.ronda = 0;
+                location.reload();
+            });
+
+            console.log(localStorage.ronda);
+            console.log(localStorage.parelles);
+
+            if (localStorage.ronda == null) {
+                $("#partida").text("Nou torneig");
+                localStorage.ronda = 0;
+                console.log("Nou torneig");
+            }
+            else {
+                $("#partida").text("Reiniciar torneig");
+            }
+
+            if (localStorage.ronda == 0) {
+                $("#ronda_title").text("Preparació");
+                $("table").hide();
+            }
+            else if (localStorage.ronda == -1) {
+                $("#ronda_title").text("Competició finalitzada");
+                $("#table").hide();
+                $("#next_round").hide();
+            }
+            else {
+                $("table").show();
+                $("#partida").text("Reiniciar torneig");
+                $("#ronda_title").text("Ronda " + localStorage.ronda);
+
+                var partides_ronda = JSON.parse(localStorage.partides_ronda);
+                var parelles = JSON.parse(localStorage.parelles);
+                $.each(partides_ronda, function (index, value) {
+                    var parella1 = parelles[value[0]];
+                    var parella2 = parelles[value[1]];
+                    button_str = '<button id="button_add" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-edit"></i> Afegir punts</button>'
+                    $("table").append("<tr><td rowspan='2'>" + (index + 1) + button_str + "</td><td>" + parella1.nomParella + "</td><td>" + parella1.nom1 + "</td><td>" + parella1.nom2 + "</td></tr><tr><td>" + parella2.nomParella + "</td><td>" + parella2.nom1 + "</td><td>" + parella2.nom2 + "</td></tr>");
+                });
+                $("#next_round").text("Seguent ronda");
+            }
+
+            $("#guardarpunts").click(function () {
+                console.log("Guarda punts");
+                parella1_id = $("#parella1_id").val();
+                parella2_id = $("#parella2_id").val();
+                punts_ronda = JSON.parse(localStorage.punts_ronda);
+                parella1_pf = $("#parella1_puntsf").val();
+                parella1_pc = $("#parella1_puntsc").val();
+                if (parella1_pf < 0 & parella1_pc < 0) {
+                    alert("Els punts no poden ser negatius");
+                    return;
+                }
+
+
+                punts_ronda[parella1_id][0] = parella1_pf;
+                punts_ronda[parella1_id][1] = parella1_pc;
+                punts_ronda[parella2_id][0] = parella1_pc;
+                punts_ronda[parella2_id][1] = parella1_pf;
+                localStorage.setItem("punts_ronda", JSON.stringify(punts_ronda));
+                $('#exampleModal').modal('toggle');
+            });
+
+            $('#table').on('click', '#button_add', function () {
+                var idx = $(this).closest('td').parent()[0].sectionRowIndex / 2;
+                console.log(idx);
+                var partides_ronda = JSON.parse(localStorage.partides_ronda);
+                var punts_ronda = JSON.parse(localStorage.punts_ronda);
+                var parelles = JSON.parse(localStorage.parelles);
+                var parella1_idx = partides_ronda[idx][0];
+                var parella1 = parelles[parella1_idx];
+                var parella2 = parelles[partides_ronda[idx][1]];
+                $("#parella1_id").val(partides_ronda[idx][0]);
+                $("#parella2_id").val(partides_ronda[idx][1]);
+                $("#parella1").text(parella1.nomParella);
+                $("#parella1_puntsf").val(punts_ronda[parella1_idx][0]);
+                $("#parella1_puntsc").val(punts_ronda[parella1_idx][1]);
+
+            });
+
+            $("#next_round").click(function () {
+
+
+                if (localStorage.ronda == 0 & !check_parelles()) {
+                    alert("No hi ha parelles");
+                }
+                else {
+
+                    parelles = JSON.parse(localStorage.parelles);
+                    num_rondes = Math.log2(parelles.length);
+                    console.log("Num rondes: " + num_rondes);
+                    console.log("Ronda actual: " + localStorage.ronda);
+
+                    if (localStorage.ronda > 0) {
+
+                        // Check all points are filled
+                        var punts_ronda = JSON.parse(localStorage.punts_ronda);
+
+                        for (var i = 0; i < punts_ronda.length; i++) {
+                            value = punts_ronda[i];
+                            if (value[0] == 0 & value[1] == 0) {
+                                alert("Falten punts per omplir");
+                                return false;
+                            }
+                        }
+                    }
+
+
+
+                    localStorage.ronda++;
+
+                    $("#ronda_title").text("Ronda " + localStorage.ronda);
+
+                    if (localStorage.ronda == 1) {
+                        parelles = JSON.parse(localStorage.parelles);
+                        var resultat_equip = [];
+                        var punts_equip = [];
+                        var jugat_equip = [];
+                        var punts = []
+                        var punts_ronda = []
+
+                        for (var i = 0; i < parelles.length; i++) {
+                            resultat_equip.push([0, 0, 0]);
+                            punts_equip.push([0, 0, 0]);
+                            jugat_equip.push([]);
+                            punts.push(0);
+                            punts_ronda.push([0, 0]);
+                        }
+
+                        victories = {
+                            "0": range(0, parelles.length)
+                        }
+                        localStorage.setItem("victories", JSON.stringify(victories));
+                        localStorage.setItem("punts", JSON.stringify(punts));
+                        localStorage.setItem("resultat_equip", JSON.stringify(resultat_equip));
+                        localStorage.setItem("punts_equip", JSON.stringify(punts_equip));
+                        localStorage.setItem("punts_ronda", JSON.stringify(punts_ronda));
+                        localStorage.setItem("jugat_equip", JSON.stringify(jugat_equip));
+                    }
+                    else {
+                        partides_ronda = JSON.parse(localStorage.partides_ronda);
+                        var punts_ronda = JSON.parse(localStorage.punts_ronda);
+                        resultat_equip = JSON.parse(localStorage.resultat_equip);
+                        jugat_equip = JSON.parse(localStorage.jugat_equip);
+                        punts_equip = JSON.parse(localStorage.punts_equip);
+                        $.each(partides_ronda, function (index, value) {
+                            var parella1 = parelles[value[0]];
+                            var parella2 = parelles[value[1]];
+                            punts_parella1 = punts_ronda[value[0]];
+                            punts_parella2 = punts_ronda[value[1]];
+                            console.log('Punts parella1' + punts_parella1);
+                            console.log('Punts parella2' + punts_parella2);
+                            if (punts_parella1[0] > punts_parella1[1]) {
+                                resultat_equip[value[0]][0]++;
+                                resultat_equip[value[1]][2]++;
+                            }
+                            else if (punts_parella1[0] == punts_parella1[1]) {
+                                resultat_equip[value[0]][1]++;
+                                resultat_equip[value[1]][1]++;
+                            }
+                            else {
+                                resultat_equip[value[0]][2]++;
+                                resultat_equip[value[1]][0]++;
+                            }
+                            punts_equip[value[0]][0] += parseInt(punts_parella1[0]);
+                            punts_equip[value[0]][1] += parseInt(punts_parella1[1]);
+                            punts_equip[value[0]][2] = punts_equip[value[0]][0] - punts_equip[value[0]][1];
+
+                            punts_equip[value[1]][0] += parseInt(punts_parella2[0]);
+                            punts_equip[value[1]][1] += parseInt(punts_parella2[1]);
+                            punts_equip[value[1]][2] = punts_equip[value[1]][0] - punts_equip[value[1]][1];
+
+                            jugat_equip[value[0]].push(value[1]);
+                            jugat_equip[value[1]].push(value[0]);
+                        });
+                        localStorage.setItem("resultat_equip", JSON.stringify(resultat_equip));
+                        localStorage.setItem("punts_equip", JSON.stringify(punts_equip));
+                        localStorage.setItem("jugat_equip", JSON.stringify(jugat_equip));
+
+                        punts_ronda = [];
+                        for (var i = 0; i < parelles.length; i++) {
+                            punts_ronda.push([0, 0]);
+                        }
+                        localStorage.setItem("punts_ronda", JSON.stringify(punts_ronda));
+
+                        victories = {};
+                        for (var i = 0; i < localStorage.ronda; i++) {
+                            victories[i] = [];
+                            for (var j = 0; j < parelles.length; j++) {
+                                if (resultat_equip[j][0] == i) {
+                                    victories[i].push(j);
+                                }
+                            }
+
+                        }
+                        console.log(victories);
+                        localStorage.setItem("victories", JSON.stringify(victories));
+                    }
+
+                    if (num_rondes == parseInt(localStorage.ronda - 1)) {
+                        console.log("Competició finalitzada")
+                        $("#ronda_title").text("Competició finalitzada");
+                        $("#table").hide();
+                        $("#next_round").hide();
+                        localStorage.ronda = -1;
+                        return false;
+                    }
+                    else {
+                        console.log("Genera parelles, ronda " + localStorage.ronda);
+                        genera_partides();
+                    }
+
+                    location.reload();
+                }
+            });
+        });
+
+        function check_parelles() {
+            if (localStorage.parelles == null) {
+                return false
+            }
+            else {
+                var parelles = JSON.parse(localStorage.parelles)
+                if (parelles.length % 2 == 0) {
+                    console.log("Num parelles: " + parelles.length);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+
+        }
+
+        function genera_partides() {
+            var victories = JSON.parse(localStorage.victories);
+            var punts = JSON.parse(localStorage.punts);
+            var jugat_equip = JSON.parse(localStorage.jugat_equip);
+            var all_matches = [];
+            unmatchedTeams = [];
+            for (var i = 0; i < Object.keys(JSON.parse(localStorage.victories)).length; i++) {
+                console.log("Agrupa equips amb " + i + " victòries");
+                parelles = victories[i];
+
+                // Obtenir punts
+                punts_parella = getElementsByIndices(punts, parelles);
+                parelles_ordenades = sortByOtherList(parelles, punts_parella);
+                matchesa = createUniqueMatchesAndUnmatchedTeams(parelles_ordenades, jugat_equip);
+                console.log(matchesa);
+                matches = matchesa.matches
+                unmatched = matchesa.unmatchedTeams
+                all_matches.push(...matches);
+                unmatchedTeams.push(...unmatched);
+            }
+
+
+            matchesa = createMatchesWithUnmatchedTeams(unmatchedTeams, jugat_equip);
+            all_matches.push(...matchesa);
+
+            localStorage.setItem("partides_ronda", JSON.stringify(all_matches));
+            //console.log(partides);
+        }
+
+        function range(start, end) {
+            var array = [];
+            for (var i = start; i < end; i++) {
+                array.push(i);
+            }
+            return array;
+        }
+
+        function getElementsByIndices(mainList, indicesList) {
+            // Use map to get elements based on indices
+            const result = indicesList.map(index => mainList[index]);
+
+            return result;
+        }
+
+        function sortByOtherList(mainList, otherList) {
+            const combinedList = mainList.map((element, index) => ({ element, otherValue: otherList[index] }));
+
+            // Sort the combined list based on otherList values
+            combinedList.sort((a, b) => a.otherValue - b.otherValue);
+
+            // Extract the sorted mainList based on the sorted order of otherList
+            const sortedMainList = combinedList.map(item => item.element);
+
+            return sortedMainList;
+        }
+
+        function createMatchesWithUnmatchedTeams(teamList, playedMatchesDictionary) {
+            const matches = [];
+            const matchedTeams = {};
+
+            // Function to check if a pair is unique
+            function isUniquePair(teamA, teamB) {
+                const hasPlayed = playedMatchesDictionary[teamA] && playedMatchesDictionary[teamA].includes(teamB);
+                const teamsAlreadyMatched = matchedTeams[teamA] || matchedTeams[teamB];
+                return !hasPlayed && !teamsAlreadyMatched;
+            }
+
+            // Function to mark teams as matched
+            function markTeamsAsMatched(teamA, teamB) {
+                matchedTeams[teamA] = true;
+                matchedTeams[teamB] = true;
+            }
+
+            // Create matches from unmatched teams
+            for (let i = 0; i < teamList.length - 1; i++) {
+                const teamA = teamList[i];
+
+                for (let j = i + 1; j < teamList.length; j++) {
+                    const teamB = teamList[j];
+
+                    if (isUniquePair(teamA, teamB)) {
+                        matches.push([teamA, teamB]);
+                        markTeamsAsMatched(teamA, teamB);
+                        break; // Break to ensure each team has only one match
+                    }
+                }
+            }
+
+            // Create additional matches if there are still unmatched teams
+            for (let i = 0; i < teamList.length; i++) {
+                const team = teamList[i];
+
+                if (!matchedTeams[team]) {
+                    const unmatchedTeam = teamList.find(t => t !== team && !matchedTeams[t]);
+
+                    if (unmatchedTeam) {
+                        matches.push([team, unmatchedTeam]);
+                        markTeamsAsMatched(team, unmatchedTeam);
+                    }
+                }
+            }
+
+            return matches;
+        }
+
+        function createUniqueMatchesAndUnmatchedTeams(teamList, playedMatchesDictionary) {
+            const matches = [];
+            const matchedTeams = {};
+
+            for (let i = 0; i < teamList.length - 1; i++) {
+                const teamA = teamList[i];
+
+                for (let j = i + 1; j < teamList.length; j++) {
+                    const teamB = teamList[j];
+
+                    // Check if teams haven't played against each other and haven't been matched before
+                    const hasPlayed = playedMatchesDictionary[teamA] && playedMatchesDictionary[teamA].includes(teamB);
+                    const teamsAlreadyMatched = matchedTeams[teamA] || matchedTeams[teamB];
+
+                    if (!hasPlayed && !teamsAlreadyMatched) {
+                        matches.push([teamA, teamB]);
+                        matchedTeams[teamA] = true;
+                        matchedTeams[teamB] = true;
+                        break; // Break to ensure each team has only one match
+                    }
+                }
+            }
+
+            // Identify unmatched teams
+            const unmatchedTeams = teamList.filter(team => !matchedTeams[team]);
+
+            return { matches, unmatchedTeams };
+        }
+
+
+    </script>
+</body>
+
+</html>

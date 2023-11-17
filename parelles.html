@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Parelles</title>
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Butifarla</h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+            <a class="p-2 text-dark active" href="main.html">Principal</a>
+            <a class="p-2 text-dark" href="parelles.html">Parelles</a>
+            <a class="p-2 text-dark" href="puntuacio.html">Puntuacio</a>
+            <a id="partida" class="p-2 text-dark" href="#"></a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col mb-4">
+                <form id="form">
+                    <div class="form-group row">
+                        <label for="Nom Parella" class="col-sm-2 col-auto">Nom Parella</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="nomParella" value="Parella 1">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-auto">Nom 1</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="nom1" value="Fol Pont">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-auto">Nom 2</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="nom2" value="Jordi Cordoba">
+                        </div>
+                    </div>
+                    <button class="btn btn-md btn-primary btn-block" type="submit">Afegir</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table id="table" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nom Parella</th>
+                            <th scope="col">Nom 1</th>
+                            <th scope="col">Nom 2</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script defer>
+        console.log(localStorage.connected)
+        if (localStorage.connected != "true") {
+            window.location.href = "index.html";
+        }
+        $(document).ready(function () {
+            if (localStorage.parelles != null) {
+                var parelles = JSON.parse(localStorage.parelles)
+                $.each(parelles, function (index, value) {
+                    console.log(value.nomParella);
+                    console.log(value.nom1);
+                    console.log(value.nom2);
+                    if (localStorage.ronda == 0 | localStorage.ronda == null) {
+                        $("table").append("<tr><td>" + value.nomParella + "</td><td>" + value.nom1 + "</td><td>" + value.nom2 + "</td><td><button id='btn-edit' class='btn btn-sm btn-danger'>Eliminar</button></td></tr>");
+                    }
+                    else {
+                        $("table").append("<tr><td>" + value.nomParella + "</td><td>" + value.nom1 + "</td><td>" + value.nom2 + "</td><td></td></tr>");
+                    }
+                });
+
+                $("#nomParella").val("Parella " + (parelles.length + 1) + "");
+            }
+            else {
+                $("#nomParella").text("Parella 1")
+            }
+        });
+
+        $("#form").submit(function (e) {
+            var nomParella = $("#nomParella").val();
+            var nom1 = $("#nom1").val();
+            var nom2 = $("#nom2").val();
+
+            console.log(nomParella);
+            console.log(nom1);
+            console.log(nom2);
+
+            if (localStorage.parelles == null) {
+                var parelles = [];
+            }
+            else {
+                var parelles = JSON.parse(localStorage.parelles)
+            }
+
+            console.log("parelles");
+            parelles.push({
+                "nomParella": nomParella,
+                "nom1": nom1,
+                "nom2": nom2
+            });
+            localStorage.setItem("parelles", JSON.stringify(parelles));
+
+            console.log(parelles);
+
+        });
+
+        $('#table').on('click', '#btn-edit', function () {
+            var idx = $(this).closest('td').parent()[0].sectionRowIndex;
+            var parelles = JSON.parse(localStorage.parelles)
+            parelles.splice(idx, 1);
+            localStorage.setItem("parelles", JSON.stringify(parelles));
+            location.reload();
+        });
+    </script>
+</body>
+
+</html>
