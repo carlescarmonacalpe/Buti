@@ -94,7 +94,41 @@
                 });
             }
 
-            $('#TableSort').DataTable({ order: [[4, 'desc'], [9, 'desc']], searching: false, paging: false, info: false });
+            /*$('#TableSort').DataTable({ order: [[4, 'desc'], [9, 'desc']], searching: false, paging: false, info: false, 
+										"scrollX": true,
+										"animate": true});
+            // Function to autoscroll up and down
+            let scrollInterval;
+            let scrollDirection = 1; // 1 for down, -1 for up
+            const scrollSpeed = 3000;  // Adjust speed as needed
+            const scrollStep = 200;    // Number of pixels per scroll step
+
+            function startAutoScroll() {
+                scrollInterval = setInterval(function () {
+                    let $scrollBody = $('body,html');
+                    let currentScrollTop = $scrollBody.scrollTop();
+                    let maxScrollTop = 800;
+
+                    // Toggle direction at top or bottom
+                    if (currentScrollTop >= maxScrollTop || currentScrollTop <= 0) {
+                        scrollDirection *= -1;
+                    }
+                    console.log($scrollBody.scrollTop());
+                    // Adjust scroll position
+                    $scrollBody.scrollTop(currentScrollTop + (scrollStep * scrollDirection));
+                    
+                }, scrollSpeed);
+            }
+
+            function stopAutoScroll() {
+                clearInterval(scrollInterval);
+            }
+
+            // Start autoscroll on load
+            startAutoScroll();*/
+
+            // Optional: Stop autoscroll on hover, resume on mouse leave
+            //$('body,html').hover(stopAutoScroll, startAutoScroll);
         });
 
 

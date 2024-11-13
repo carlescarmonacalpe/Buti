@@ -19,7 +19,7 @@
 
 <body class="text-center">
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal">Butifarla</h5>
+        <h5 class="my-0 mr-md-auto font-weight-normal">Butifarra</h5>
         <nav class="my-2 my-md-0 mr-md-3">
             <a class="p-2 text-dark active" href="main.html">Principal</a>
             <a class="p-2 text-dark" href="parelles.html">Parelles</a>
@@ -39,12 +39,13 @@
             <h1 id="ronda_title" class="cover-heading">Ronda</h1>
             <p class="lead">
                 <a id="next_round" href="#" class="btn btn-lg btn-secondary">Començar</a>
+                <a id="undo" href="#" class="btn btn-lg btn-secondary">Enrerre</a>
             </p>
             <div id="table">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Taula</th>
                             <th>Nom equip</th>
                             <th>Parella 1</th>
                             <th>Parella 2</th>
@@ -151,6 +152,14 @@
             else {
                 $("#partida").text("Reiniciar torneig");
             }
+            
+            if (localStorage.ronda > 1) {
+                $("#undo").show();
+            }
+            else{
+                $("#undo").hide();
+
+            }
 
             if (localStorage.ronda == 0) {
                 $("#ronda_title").text("Preparació");
@@ -174,7 +183,7 @@
                     button_str = '<button id="button_add" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-edit"></i> Afegir punts</button>'
                     $("table").append("<tr><td rowspan='2'>" + (index + 1) + button_str + "</td><td>" + parella1.nomParella + "</td><td>" + parella1.nom1 + "</td><td>" + parella1.nom2 + "</td></tr><tr><td>" + parella2.nomParella + "</td><td>" + parella2.nom1 + "</td><td>" + parella2.nom2 + "</td></tr>");
                 });
-                $("#next_round").text("Seguent ronda");
+                $("#next_round").text("Següent ronda");
             }
 
             $("#guardarpunts").click(function () {
@@ -196,6 +205,28 @@
                 punts_ronda[parella2_id][1] = parella1_pf;
                 localStorage.setItem("punts_ronda", JSON.stringify(punts_ronda));
                 $('#exampleModal').modal('toggle');
+            });
+
+            $("#undo").click(function () {
+                alert("START");
+
+                
+                bk = JSON.parse(localStorage.bk)[localStorage.ronda-1];
+
+                localStorage.setItem("victories", JSON.stringify(bk["victories"]));
+                localStorage.setItem("punts", JSON.stringify(bk["punts"]));
+                localStorage.setItem("resultat_equip", JSON.stringify(bk["resultat_equip"]));
+                localStorage.setItem("punts_equip", JSON.stringify(bk["punts_equip"]));
+                localStorage.setItem("punts_ronda", JSON.stringify(bk["punts_ronda"]));
+                localStorage.setItem("jugat_equip", JSON.stringify(bk["jugat_equip"]));
+
+                if (localStorage.partides_ronda != null){
+                    localStorage.setItem("partides_ronda", JSON.stringify(bk["partides_ronda"]));
+                }
+
+                localStorage.ronda--;
+                location.reload();
+
             });
 
             $('#table').on('click', '#button_add', function () {
@@ -267,6 +298,26 @@
                         victories = {
                             "0": range(0, parelles.length)
                         }
+
+                        //Save backup
+                        if (localStorage.getItem("bk") === null) {
+                            bk = {}
+                        }
+                        else{
+                            bk = JSON.parse(localStorage.bk);
+                        }
+                        
+                        bk[localStorage.ronda-1] ={
+                            "victories": victories,
+                            "punt": punts,
+                            "resultat_equip": resultat_equip,
+                            "punts_equip": punts_equip,
+                            "punts_ronda": punts_ronda,
+                            "jugat_equip": jugat_equip
+                        } 
+                        localStorage.setItem("bk", JSON.stringify(bk));
+                        
+
                         localStorage.setItem("victories", JSON.stringify(victories));
                         localStorage.setItem("punts", JSON.stringify(punts));
                         localStorage.setItem("resultat_equip", JSON.stringify(resultat_equip));
@@ -275,11 +326,34 @@
                         localStorage.setItem("jugat_equip", JSON.stringify(jugat_equip));
                     }
                     else {
+
                         partides_ronda = JSON.parse(localStorage.partides_ronda);
                         var punts_ronda = JSON.parse(localStorage.punts_ronda);
                         resultat_equip = JSON.parse(localStorage.resultat_equip);
                         jugat_equip = JSON.parse(localStorage.jugat_equip);
                         punts_equip = JSON.parse(localStorage.punts_equip);
+                        victories = JSON.parse(localStorage.victories);
+
+                        //Save backup
+                        if (localStorage.getItem("bk") === null) {
+                            bk = {}
+                        }
+                        else{
+                            bk = JSON.parse(localStorage.bk);
+                        }
+                        
+                        bk[localStorage.ronda-1] ={
+                            "victories": victories,
+                            "punt": punts,
+                            "resultat_equip": resultat_equip,
+                            "punts_equip": punts_equip,
+                            "punts_ronda": punts_ronda,
+                            "jugat_equip": jugat_equip,
+                            "partides_ronda": partides_ronda
+                        } 
+                        localStorage.setItem("bk", JSON.stringify(bk));
+                        
+
                         $.each(partides_ronda, function (index, value) {
                             var parella1 = parelles[value[0]];
                             var parella2 = parelles[value[1]];
@@ -352,6 +426,8 @@
             });
         });
 
+        
+
         function check_parelles() {
             if (localStorage.parelles == null) {
                 return false
@@ -363,6 +439,7 @@
                     return true;
                 }
                 else {
+                    alert("Número de parelles impar");
                     return false;
                 }
             }
